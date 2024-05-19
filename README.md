@@ -41,3 +41,7 @@ eg: you have a Hard Drive Disk you want to use for this purpose named "HDD", the
 4. Create an alias in your RC file: `echo "alias backup='python3 ~/icloud_cold_backup/backup.py'" >> ~/.zshrc` (suppose you use ZSH)
 5. Restart your Terminal (or run `source ~/.zshrc`)
 6. Run `backup`
+
+# Thanks
+
+If you find value in this script and would like to show your support, you can [Buy Me A Coffee](https://www.buymeacoffee.com/gaetanmuck), it would be grateful.
