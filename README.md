@@ -1,4 +1,4 @@
-# icloud_cold_backup
+# iCloud Cold Backup
 
 ![GitHub all releases](https://img.shields.io/github/downloads/gaetanmuck/icloud_cold_backup/total)
 
