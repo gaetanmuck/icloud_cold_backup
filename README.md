@@ -1,6 +1,7 @@
-# icloud_cold_backup
+# iCloud Cold Backup
 
-![GitHub all releases](https://img.shields.io/github/downloads/gaetanmuck/icloud_cold_backup/total)
+![GitHub Downloads (all assets, all releases)](https://img.shields.io/github/downloads/gaetanmuck/icloud_cold_backup/total)
+
 
 A python script to save icloud content on a hard drive.
 Only apply modifications from last execution.
@@ -41,3 +42,7 @@ eg: you have a Hard Drive Disk you want to use for this purpose named "HDD", the
 4. Create an alias in your RC file: `echo "alias backup='python3 ~/icloud_cold_backup/backup.py'" >> ~/.zshrc` (suppose you use ZSH)
 5. Restart your Terminal (or run `source ~/.zshrc`)
 6. Run `backup`
+
+# Thanks
+
+If you find value in this script and would like to show your support, you can [Buy Me A Coffee](https://www.buymeacoffee.com/gaetanmuck), it would be grateful.
