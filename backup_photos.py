@@ -1,5 +1,5 @@
 import os
-from datetime import datetime
+from datetime import datetime, timezone
 import gmpykit as kit
 
 eta = kit.Eta()
@@ -10,7 +10,7 @@ def __scan_icloud(api):
     total_size = 0
 
     for photo in api.photos.all:
-        key = f'{photo.filename} - {photo.created.strftime("%Y%m%d%H%M%S")} - {photo.size}'
+        key = f'{photo.filename} - {int(photo.created.timestamp())} - {photo.size}'
 
         keys.add(key)
         photos.append({
@@ -39,9 +39,9 @@ def __scan_disk(path):
 
     for photo in os.listdir(path + '/photos/'):
         photo_path = path + '/photos/' + photo
-        date = datetime.fromtimestamp(os.path.getmtime(photo_path)).strftime("%Y%m%d%H%M%S")
+        date = int(os.path.getmtime(photo_path))
         size = os.stat(photo_path).st_size
-        key = f'photos/{photo} - {date} - {size}'
+        key = f'{photo} - {date} - {size}'
 
         keys.add(key)
         photos.append({
@@ -115,4 +115,3 @@ def backup_photos(api, backup_path):
 
         eta.iter()
     eta.end()
-    

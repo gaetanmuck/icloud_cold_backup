@@ -27,10 +27,10 @@ if not os.path.exists(disk_path):
 # Connect to iCloud API
 api = PyiCloudService(apple_id, apple_pwd)
 
-# Backup Files
-print('===== Backing iCloud Drive on the specified location =====')
-backup_files(api, disk_path)
-print('> iCloud Drive has correctly been backed up on disk.')
+# # Backup Files
+# print('===== Backing iCloud Drive on the specified location =====')
+# backup_files(api, disk_path)
+# print('> iCloud Drive has correctly been backed up on disk.')
 
 # Backup Photos
 print('===== Backing iCloud photos on the specified location =====')
