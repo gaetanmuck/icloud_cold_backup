@@ -1,6 +1,7 @@
 # iCloud Cold Backup
 
-![GitHub all releases](https://img.shields.io/github/downloads/gaetanmuck/icloud_cold_backup/total)
+![GitHub Downloads (all assets, all releases)](https://img.shields.io/github/downloads/gaetanmuck/icloud_cold_backup/total)
+
 
 A python script to save icloud content on a hard drive.
 Only apply modifications from last execution.
