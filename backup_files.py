@@ -35,7 +35,7 @@ def __list_folder_icloud(path, folder, found_nb=0, found_size=0):
 
             total_nb += 1
             total_size += file.size if file.size else 0
-            print(f'Exploring iCloud drive (this could take some minutes); {total_nb} files found ({kit.readable_bytes(total_size)})', end='          \r')
+            print(f'Exploring iCloud drive (this could take some minutes) ... {total_nb} files found ({kit.readable_bytes(total_size)})', end='          \r')
         else:
             keys_, files_, total_nb, total_size = __list_folder_icloud(path + file_name + '/', file, total_nb, total_size)
             keys.update(keys_)
@@ -75,7 +75,7 @@ def __list_folder_disk(path, relative_path, found_nb=0, found_size=0):
             })
             total_nb += 1
             total_size += size
-            print(f'Exploring disk drive; {total_nb} files found ({kit.readable_bytes(total_size)})', end='          \r')
+            print(f'Exploring disk drive ... {total_nb} files found ({kit.readable_bytes(total_size)})', end='          \r')
 
     return keys, files, total_nb, total_size
          
@@ -103,7 +103,7 @@ def backup_files(api, backup_path):
     nb_deleted = 0
 
     if not len(files_disk) == 0:
-        eta.begin(len(files_disk), 'Verifying files on disk')
+        eta.begin(len(files_disk), '> Verifying files on disk')
         for file in files_disk:
 
             # If file key is not in the icloud set, then it has been updated, renamed or deleted
@@ -128,34 +128,40 @@ def backup_files(api, backup_path):
 
     # First list all items to create (so that the ETA is accurate)
     to_create = []
-    eta.begin(len(files_icloud), 'List all files that need backup')
+    eta.begin(len(files_icloud), '> List all files that need backup')
     for file in files_icloud:
         if file['key'] not in keys_disk: 
             to_create.append(file)
         eta.iter()
     eta.end()
+    to_create = list(filter(lambda file: file['size'] != 0 and file['size'] != None, to_create))
     total_files_size = sum(list(map(lambda file: file['size'] if file['size'] else 0, to_create)))
     print(f'> {len(to_create)} files need to be downloaded and saved on disk ({kit.readable_bytes(total_files_size)})')
 
-    # Then download and write on disk all files that need creation
-    eta.begin(len(to_create), 'Downloading and writing files on disk')
-    for file in to_create:
-        # Get the icloud file object
-        icloud_path = file['path'][1:].split('/')
-        icloud_file = __deref(api.drive, icloud_path)
+    if len(to_create) != 0:
+        # Then download and write on disk all files that need creation
+        eta.begin(total_files_size, '> Downloading and writing files on disk')
+        saved_size = 0
+        for file in to_create:
+            # Get the icloud file object
+            icloud_path = file['path'][1:].split('/')
+            icloud_file = __deref(api.drive, icloud_path)
 
-        # Create the path on disk for the specific file
-        file_disk_path = backup_path + '/drive' + file['path']
-        Path(file_disk_path[0:file_disk_path.rfind('/')]).mkdir(parents=True, exist_ok=True)
+            # Create the path on disk for the specific file
+            file_disk_path = backup_path + '/drive' + file['path']
+            Path(file_disk_path[0:file_disk_path.rfind('/')]).mkdir(parents=True, exist_ok=True)
 
-        # Download and write the file on disk
-        with icloud_file.open(stream=True) as response:
-            with open(file_disk_path, 'wb') as file_out:
-                copyfileobj(response.raw, file_out)
+            # Download and write the file on disk
+            with icloud_file.open(stream=True) as response:
+                with open(file_disk_path, 'wb') as file_out:
+                    copyfileobj(response.raw, file_out)
+                    saved_size += file['size'] if file['size'] else 0
 
-        # Set the modification date so that it matches the one on iCloud
-        os.utime(file_disk_path, (int(icloud_file.date_modified.timestamp()), int(icloud_file.date_modified.timestamp())))
+            # Set the modification date so that it matches the one on iCloud
+            os.utime(file_disk_path, (int(icloud_file.date_modified.timestamp()), int(icloud_file.date_modified.timestamp())))
 
-        eta.iter()
-    eta.end()
+            eta.iter(saved_size)
+        eta.end()
+    else:
+        print('> Nothing to add on disk')
     
